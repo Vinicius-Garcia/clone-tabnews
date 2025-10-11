@@ -1,4 +1,4 @@
-import database from "../../../../infra/database.js";
+import database from "infra/database.js";
 
 function status(req, res) {
   const result = database.query("SELECT 1");
