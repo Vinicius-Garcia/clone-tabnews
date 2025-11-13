@@ -26,8 +26,8 @@ describe("GET /api/v1/users/[username]", () => {
         id: responseBody.id,
         username: "MesmoCase",
         email: createdUser.email,
-        features: ["read:activation_token"],
         password: responseBody.password,
+        features: ["read:activation_token"],
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });
@@ -54,8 +54,8 @@ describe("GET /api/v1/users/[username]", () => {
         id: responseBody.id,
         username: "CaseDiferente",
         email: createdUser.email,
-        features: ["read:activation_token"],
         password: responseBody.password,
+        features: ["read:activation_token"],
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });
@@ -77,7 +77,7 @@ describe("GET /api/v1/users/[username]", () => {
       expect(responseBody).toEqual({
         name: "NotFoundError",
         message: "O username informado não foi encontrado no sistema.",
-        action: "Verifique se o username está digitado corretamente.",
+        action: "Verifique se o username foi digitado corretamente.",
         status_code: 404,
       });
     });

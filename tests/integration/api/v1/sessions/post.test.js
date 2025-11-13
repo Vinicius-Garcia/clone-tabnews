@@ -51,7 +51,7 @@ describe("POST /api/v1/sessions", () => {
         },
         body: JSON.stringify({
           email: "email.correto@curso.dev",
-          password: "senha-incorreta",
+          password: "senha-errada",
         }),
       });
 
@@ -76,8 +76,8 @@ describe("POST /api/v1/sessions", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: "email.incorreto@curso.dev",
-          password: "senha-incorreta",
+          email: "email.errado@curso.dev",
+          password: "senha-errada",
         }),
       });
 
@@ -96,8 +96,10 @@ describe("POST /api/v1/sessions", () => {
     test("With correct `email` and correct `password`", async () => {
       const createdUser = await orchestrator.createUser({
         email: "tudo.correto@curso.dev",
-        password: "tudocorreto",
+        password: "tudo.correto",
       });
+
+      await orchestrator.activateUser(createdUser);
 
       const response = await fetch("http://localhost:3000/api/v1/sessions", {
         method: "POST",
@@ -106,13 +108,15 @@ describe("POST /api/v1/sessions", () => {
         },
         body: JSON.stringify({
           email: "tudo.correto@curso.dev",
-          password: "tudocorreto",
+          password: "tudo.correto",
         }),
       });
 
       expect(response.status).toBe(201);
 
       const responseBody = await response.json();
+
+      console.log(responseBody);
 
       expect(responseBody).toEqual({
         id: responseBody.id,

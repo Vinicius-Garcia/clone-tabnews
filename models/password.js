@@ -17,5 +17,4 @@ const password = {
   hash,
   compare,
 };
-
 export default password;

@@ -25,7 +25,7 @@ async function findOneById(id) {
     if (results.rowCount === 0) {
       throw new NotFoundError({
         message: "O id informado não foi encontrado no sistema.",
-        action: "Verifique se o id está digitado corretamente.",
+        action: "Verifique se o id foi digitado corretamente.",
       });
     }
 
@@ -56,7 +56,7 @@ async function findOneByUsername(username) {
     if (results.rowCount === 0) {
       throw new NotFoundError({
         message: "O username informado não foi encontrado no sistema.",
-        action: "Verifique se o username está digitado corretamente.",
+        action: "Verifique se o username foi digitado corretamente.",
       });
     }
 
@@ -87,7 +87,7 @@ async function findOneByEmail(email) {
     if (results.rowCount === 0) {
       throw new NotFoundError({
         message: "O email informado não foi encontrado no sistema.",
-        action: "Verifique se o email está digitado corretamente.",
+        action: "Verifique se o email foi digitado corretamente.",
       });
     }
 
@@ -99,7 +99,6 @@ async function create(userInputValues) {
   await validateUniqueUsername(userInputValues.username);
   await validateUniqueEmail(userInputValues.email);
   await hashPasswordInObject(userInputValues);
-
   injectDefaultFeaturesInObject(userInputValues);
 
   const newUser = await runInsertQuery(userInputValues);
@@ -108,13 +107,13 @@ async function create(userInputValues) {
   async function runInsertQuery(userInputValues) {
     const results = await database.query({
       text: `
-        INSERT INTO
+        INSERT INTO 
           users (username, email, password, features)
-        VALUES
+        VALUES 
           ($1, $2, $3, $4)
         RETURNING
           *
-        ;`,
+      ;`,
       values: [
         userInputValues.username,
         userInputValues.email,
@@ -122,6 +121,7 @@ async function create(userInputValues) {
         userInputValues.features,
       ],
     });
+
     return results.rows[0];
   }
 
@@ -148,12 +148,13 @@ async function update(username, userInputValues) {
   const userWithNewValues = { ...currentUser, ...userInputValues };
 
   const updatedUser = await runUpdateQuery(userWithNewValues);
+
   return updatedUser;
 
   async function runUpdateQuery(userWithNewValues) {
     const results = await database.query({
       text: `
-        UPDATE
+        UPDATE 
           users
         SET
           username = $2,
@@ -192,8 +193,8 @@ async function validateUniqueUsername(username) {
 
   if (results.rowCount > 0) {
     throw new ValidationError({
-      message: "O username informado já está sendo utilizado.",
-      action: "Utilize outro username para realizar esta operação.",
+      message: "O nome de usuário informado já está sendo utilizado.",
+      action: "Utilize outro nome de usuário para realizar esta operação.",
     });
   }
 }
@@ -201,13 +202,13 @@ async function validateUniqueUsername(username) {
 async function validateUniqueEmail(email) {
   const results = await database.query({
     text: `
-      SELECT
-        email
-      FROM
-        users
-      WHERE
-        LOWER(email) = LOWER($1)
-      ;`,
+        SELECT
+          email
+        FROM
+          users
+        WHERE
+          LOWER(email) = LOWER($1)
+        ;`,
     values: [email],
   });
 
@@ -224,12 +225,37 @@ async function hashPasswordInObject(userInputValues) {
   userInputValues.password = hashedPassword;
 }
 
+async function setFeatures(userId, features) {
+  const updatedUser = await runUpdateQuery(userId, features);
+  return updatedUser;
+
+  async function runUpdateQuery(userId, features) {
+    const results = await database.query({
+      text: `
+        UPDATE
+          users
+        SET
+          features = $2,
+          updated_at = timezone('utc', now())
+        WHERE
+          id = $1
+        RETURNING
+          *
+        ;`,
+      values: [userId, features],
+    });
+
+    return results.rows[0];
+  }
+}
+
 const user = {
   create,
   findOneById,
   findOneByUsername,
   findOneByEmail,
   update,
+  setFeatures,
 };
 
 export default user;
