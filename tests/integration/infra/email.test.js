@@ -1,5 +1,5 @@
 import email from "infra/email.js";
-import orchestrator from "tests/orchestrator.js";
+import orchestrator from "tests/orchestrator";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -12,7 +12,7 @@ describe("infra/email.js", () => {
     await email.send({
       from: "FinTab <contato@fintab.com.br>",
       to: "contato@curso.dev",
-      subject: "Teste de assunto",
+      subject: "Teste de email",
       text: "Teste de corpo.",
     });
 

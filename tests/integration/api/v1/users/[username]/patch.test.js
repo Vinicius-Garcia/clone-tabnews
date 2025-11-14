@@ -26,7 +26,7 @@ describe("PATCH /api/v1/users/[username]", () => {
       expect(responseBody).toEqual({
         name: "NotFoundError",
         message: "O username informado não foi encontrado no sistema.",
-        action: "Verifique se o username está digitado corretamente.",
+        action: "Verifique se o username foi digitado corretamente.",
         status_code: 404,
       });
     });
@@ -56,8 +56,8 @@ describe("PATCH /api/v1/users/[username]", () => {
 
       expect(responseBody).toEqual({
         name: "ValidationError",
-        message: "O username informado já está sendo utilizado.",
-        action: "Utilize outro username para realizar esta operação.",
+        message: "O nome de usuário informado já está sendo utilizado.",
+        action: "Utilize outro nome de usuário para realizar esta operação.",
         status_code: 400,
       });
     });
@@ -121,6 +121,7 @@ describe("PATCH /api/v1/users/[username]", () => {
         username: "uniqueUser2",
         email: createdUser.email,
         password: responseBody.password,
+        features: ["read:activation_token"],
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });
@@ -137,7 +138,6 @@ describe("PATCH /api/v1/users/[username]", () => {
 
       const response = await fetch(
         `http://localhost:3000/api/v1/users/${createdUser.username}`,
-
         {
           method: "PATCH",
           headers: {
@@ -158,6 +158,7 @@ describe("PATCH /api/v1/users/[username]", () => {
         username: createdUser.username,
         email: "uniqueEmail2@curso.dev",
         password: responseBody.password,
+        features: ["read:activation_token"],
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });
@@ -170,9 +171,7 @@ describe("PATCH /api/v1/users/[username]", () => {
     });
 
     test("With new 'password'", async () => {
-      const createdUser = await orchestrator.createUser({
-        password: "newPassword1",
-      });
+      const createdUser = await orchestrator.createUser();
 
       const response = await fetch(
         `http://localhost:3000/api/v1/users/${createdUser.username}`,
@@ -182,7 +181,7 @@ describe("PATCH /api/v1/users/[username]", () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            password: "newPassword2",
+            password: "changedPassword",
           }),
         },
       );
@@ -196,6 +195,7 @@ describe("PATCH /api/v1/users/[username]", () => {
         username: createdUser.username,
         email: createdUser.email,
         password: responseBody.password,
+        features: ["read:activation_token"],
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });
@@ -208,12 +208,12 @@ describe("PATCH /api/v1/users/[username]", () => {
 
       const userInDatabase = await user.findOneByUsername(createdUser.username);
       const correctPasswordMatch = await password.compare(
-        "newPassword2",
+        "changedPassword",
         userInDatabase.password,
       );
 
       const incorrectPasswordMatch = await password.compare(
-        "newPassword1",
+        createdUser.password,
         userInDatabase.password,
       );
 
