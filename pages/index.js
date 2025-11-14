@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Image from "next/image";
 import Script from "next/script";
 import { useEffect, useState } from "react";
 
@@ -56,8 +57,10 @@ function Home() {
     return () => clearInterval(checkLibraries);
   }, []);
 
+  // eslint-disable-next-line no-undef
   const initializeAnimations = () => {
     // Initialize Lenis
+    // eslint-disable-next-line no-undef
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // easeOutCubic
@@ -80,6 +83,7 @@ function Home() {
 
     let scene, camera, renderer, torusKnot;
 
+    // eslint-disable-next-line no-undef
     function initThreeJS() {
       const canvas = document.getElementById("bg-canvas");
       if (!canvas) {
@@ -88,9 +92,11 @@ function Home() {
       }
 
       // 1. Scene
+      // eslint-disable-next-line no-undef
       scene = new THREE.Scene();
 
       // 2. Camera
+      // eslint-disable-next-line no-undef
       camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,
@@ -100,6 +106,7 @@ function Home() {
       camera.position.z = 2.5;
 
       // 3. Renderer
+      // eslint-disable-next-line no-undef
       renderer = new THREE.WebGLRenderer({
         canvas: canvas,
         alpha: true, // Transparent background
@@ -108,20 +115,25 @@ function Home() {
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
       // 4. Geometry & Material
+      // eslint-disable-next-line no-undef
       const geometry = new THREE.TorusKnotGeometry(1, 0.3, 100, 16);
+      // eslint-disable-next-line no-undef
       const material = new THREE.MeshStandardMaterial({
         color: 0x58a6ff, // Accent color
         wireframe: true,
       });
 
       // 5. Mesh
+      // eslint-disable-next-line no-undef
       torusKnot = new THREE.Mesh(geometry, material);
       scene.add(torusKnot);
 
       // 6. Lights
+      // eslint-disable-next-line no-undef
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
       scene.add(ambientLight);
 
+      // eslint-disable-next-line no-undef
       const pointLight = new THREE.PointLight(0xffffff, 1);
       pointLight.position.set(2, 3, 4);
       scene.add(pointLight);
@@ -401,10 +413,12 @@ function Home() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                   <div className="reveal">
                     <div className="rounded-2xl bg-secondary w-full h-80 lg:h-96 flex items-center justify-center text-medium">
-                      <img
+                      <Image
                         src="https://placehold.co/600x400/161B22/8B949E?text=Vinicius+Garcia"
                         alt="Portrait of Vinicius Garcia"
                         className="w-full h-full object-cover rounded-2xl shadow-xl"
+                        width={600}
+                        height={400}
                         onError={(e) => {
                           e.target.style.display = "none";
                         }}
@@ -470,10 +484,12 @@ function Home() {
                       style={{ transitionDelay: `${index * 100}ms` }}
                     >
                       <div className="w-24 h-24 mb-4 flex items-center justify-center">
-                        <img
+                        <Image
                           src={`https://raw.githubusercontent.com/devicons/devicon/master/icons/${skill.icon.split("-")[0]}/${skill.icon}.svg`}
                           alt={skill.name}
                           className="w-full h-full object-contain"
+                          width={96}
+                          height={96}
                           onError={(e) => {
                             e.target.src =
                               "https://via.placeholder.com/96?text=" +
